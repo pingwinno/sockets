@@ -10,21 +10,20 @@ import java.net.Socket;
 public class Client {
 
     public static void main(String[] args) throws IOException {
-        try (Socket socket = new Socket("localhost", 3000)) {
+        try (var socket = new Socket("localhost", 3000);
+             var reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+             var consoleReader = new BufferedReader(new InputStreamReader(System.in));
+             var writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))) {
             System.out.println("Connected");
             System.out.println("Type message");
-            var reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            var consoleReader = new BufferedReader(new InputStreamReader(System.in));
-            var writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+
+
             String line = "";
             while ((line = consoleReader.readLine()) != null) {
                 writer.write(line + "\n");
                 writer.flush();
-                line = reader.readLine();
-                System.out.println(line);
+                System.out.println(reader.readLine());
             }
-            reader.close();
-            writer.close();
         }
     }
 }

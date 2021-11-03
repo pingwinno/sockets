@@ -7,12 +7,12 @@ import java.net.Socket;
 
 public class Client {
     public static void main(String[] args) throws IOException {
-        try (Socket socket = new Socket("localhost", 3000)) {
+        try (var socket = new Socket("localhost", 3000);
+             var outputStream = new BufferedOutputStream(socket.getOutputStream());
+             var inputStream = new BufferedInputStream(socket.getInputStream())) {
             System.out.println("Connected");
             System.out.println("Type message");
-            var outputStream = new BufferedOutputStream(socket.getOutputStream());
             int counter;
-            var inputStream = new BufferedInputStream(socket.getInputStream());
             var buffer = new byte[50];
             while ((counter = System.in.read(buffer)) != -1) {
                 var typedMessage = new String(buffer, 0, counter);
@@ -21,8 +21,7 @@ public class Client {
                 counter = inputStream.read(buffer);
                 System.out.println(new String(buffer, 0, counter));
             }
-            outputStream.close();
-            inputStream.close();
+
         }
     }
 }

@@ -25,17 +25,15 @@ public class Server {
         }
     }
 
-    public static void createConnection(Socket socket) throws IOException {
-        var reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        var writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            System.out.println("Inbound message: " + line + " Client:" + socket.getPort());
-            writer.write(("Echo: " + line + "\n"));
-            writer.flush();
+    private static void createConnection(Socket socket) throws IOException {
+        try (socket; var reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+             var writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println("Inbound message: " + line + " Client:" + socket.getPort());
+                writer.write(("Echo: " + line + "\n"));
+                writer.flush();
+            }
         }
-        reader.close();
-        writer.close();
-        socket.close();
     }
 }
